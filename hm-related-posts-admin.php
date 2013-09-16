@@ -69,13 +69,15 @@ function hm_rp_override_metabox( $post ) {
 
 function hm_rp_override_metabox_field( $id, $value = null ) {
 
+	$ajax_args = array( 'posts_per_page' => -1 );
+
 	?>
 
 	<a class="hm-rp-delete-field">&times;</a>
 
 	<input id="hm_rp_post-hm-rp-field-<?php echo esc_attr( $id ); ?>" value="<?php echo esc_attr( $value ); ?>"  name="hm_rp_post[hm-rp-field-<?php echo esc_attr( $id ); ?>]"  class="hm_rp_select" data-field-id="hm_rp_post_<?php echo esc_attr( $id ); ?>" style="width: 100%" />
 
-	<?php hm_rp_override_metabox_script( $id, $value ); ?>
+	<?php hm_rp_override_metabox_script( $id, $value, $ajax_args ); ?>
 
 	<?php
 }
