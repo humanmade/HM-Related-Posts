@@ -22,8 +22,6 @@ require_once( HMRP_PATH . '/hm-related-posts-admin.php' );
  */
 function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $taxonomies = array( 'post_tag', 'category' ), $terms_not_in = array(), $args = array() ) {
 
-	global $wpdb;
-
 	$default_args = array(
 		'post_id' 	=> get_the_id(),
 		'terms'		=> array(),
