@@ -103,7 +103,11 @@ function hm_rp_override_metabox_script( $id, $value = false, $ajax_args = false 
 				data: function( term, page ) {
 					query.s = term;
 					query.paged = page;
-					return query;
+					return { 
+						post_id: <?php echo get_the_id(); ?>, 
+						nonce: '<?php echo wp_create_nonce( 'cmb_post_select' ); ?>',
+						query: query
+					};
 				},
 				results : function( data, page ) {
 					return { results: data }
@@ -157,7 +161,14 @@ add_action( 'save_post', 'hm_rp_save' );
 // TODO this should be in inside the class
 function hm_rp_ajax_post_select() {
 
-	$query = new WP_Query( $_GET );
+	$post_id = ! empty( $_GET['post_id'] ) ? intval( $_GET['post_id'] ) : false;
+	$nonce = ! empty( $_GET['query'] ) ? $_GET['nonce'] : false;
+	$args = ! empty( $_GET['query'] ) ? $_GET['query'] : array();
+	
+	if ( ! $nonce || ! wp_verify_nonce( $nonce, 'cmb_post_select' ) || ! current_user_can( 'edit_post', $post_id ) )
+		return;
+
+	$query = new WP_Query( $args );
 
 	$posts = $query->posts;
 
