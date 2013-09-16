@@ -69,7 +69,7 @@ function hm_rp_override_metabox( $post ) {
 
 function hm_rp_override_metabox_field( $id, $value = null ) {
 
-	$ajax_args = array( 'posts_per_page' => -1 );
+	$ajax_args = array( 'posts_per_page' => 999999 );
 
 	?>
 
