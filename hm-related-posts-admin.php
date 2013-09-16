@@ -84,6 +84,12 @@ function hm_rp_override_metabox_field( $id, $value = null ) {
 
 function hm_rp_override_metabox_script( $id, $value = false, $ajax_args = false ) {
 
+	$query = json_encode( $ajax_args ? wp_parse_args( $ajax_args ) : (object) array() );
+
+	$url = add_query_arg( 'action', 'hm_rp_ajax_post_select', admin_url( 'admin-ajax.php' ) );
+	$url = add_query_arg( 'hm_rp_ajax_post_select_nonce', wp_create_nonce( 'hm_rp_ajax_post_select' ), $url );
+	$url = add_query_arg( 'post_id', get_the_id(), $url );
+
 	?>
 
 	<script type="text/javascript">
@@ -95,19 +101,15 @@ function hm_rp_override_metabox_script( $id, $value = false, $ajax_args = false 
 				allowClear: true
 			};
 
-			var query = JSON.parse( '<?php echo json_encode( $ajax_args ? wp_parse_args( $ajax_args ) : (object) array() ); ?>' );
+			var query = JSON.parse( '<?php echo $query; ?>' );
 
 			options.ajax = {
-				url: '<?php echo add_query_arg( 'action', 'hm_rp_ajax_post_select', admin_url( 'admin-ajax.php' ) ); ?>',
+				url: '<?php echo $url; ?>',
 				dataType: 'json',
 				data: function( term, page ) {
 					query.s = term;
 					query.paged = page;
-					return { 
-						post_id: <?php echo get_the_id(); ?>, 
-						nonce: '<?php echo wp_create_nonce( 'cmb_post_select' ); ?>',
-						query: query
-					};
+					return {query:query};
 				},
 				results : function( data, page ) {
 					return { results: data }
@@ -162,12 +164,12 @@ add_action( 'save_post', 'hm_rp_save' );
 function hm_rp_ajax_post_select() {
 
 	$post_id = ! empty( $_GET['post_id'] ) ? intval( $_GET['post_id'] ) : false;
-	$nonce = ! empty( $_GET['query'] ) ? $_GET['nonce'] : false;
+	$nonce = ! empty( $_GET['hm_rp_ajax_post_select_nonce'] ) ? $_GET['hm_rp_ajax_post_select_nonce'] : false;
 	$args = ! empty( $_GET['query'] ) ? $_GET['query'] : array();
-	
-	if ( ! $nonce || ! wp_verify_nonce( $nonce, 'cmb_post_select' ) || ! current_user_can( 'edit_post', $post_id ) )
-		return;
 
+	if ( ! $nonce || ! wp_verify_nonce( $nonce, 'hm_rp_ajax_post_select' ) || ! current_user_can( 'edit_post', $post_id ) )
+		return;
+	
 	$query = new WP_Query( $args );
 
 	$posts = $query->posts;
