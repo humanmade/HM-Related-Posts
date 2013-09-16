@@ -185,3 +185,75 @@ function hm_rp_ajax_post_select() {
 
 }
 add_action( 'wp_ajax_hm_rp_ajax_post_select', 'hm_rp_ajax_post_select' );
+
+
+function hm_rp_query_whitelist() {
+
+	$qv = array( 'm', 'p', 'posts', 'w', 'cat', 'withcomments', 'withoutcomments', 's', 'search', 'exact', 'sentence', 'calendar', 'page', 'paged', 'more', 'tb', 'pb', 'author', 'order', 'orderby', 'year', 'monthnum', 'day', 'hour', 'minute', 'second', 'name', 'category_name', 'tag', 'feed', 'author_name', 'static', 'pagename', 'page_id', 'error', 'comments_popup', 'attachment', 'attachment_id', 'subpost', 'subpost_id', 'preview', 'robots', 'taxonomy', 'term', 'cpage', 'post_type' );
+	$qv = array_merge( $qv, array( 'offset', 'posts_per_page', 'posts_per_archive_page', 'showposts', 'nopaging', 'post_type', 'post_status', 'category__in', 'category__not_in', 'category__and', 'tag__in', 'tag__not_in', 'tag__and', 'tag_slug__in', 'tag_slug__and', 'tag_id', 'post_mime_type', 'perm', 'comments_per_page', 'post__in', 'post__not_in', 'post_parent__in', 'post_parent__not_in' ) );
+
+
+	// $qv = array(
+		
+	// 	'year',
+	// 	'monthnum',
+	// 	'day',
+	// 	'w',
+	// 	'm',
+	// 	'paged',
+	// 	'p',
+	// 	'name',
+	// 	'page_id',
+	// 	'pagename',
+	// 	'post_parent',
+	// 	'post_parent__in',
+	// 	'post_parent__not_in',
+	// 	'post__in',
+	// 	'post__not_in',
+	// 	'nopaging',
+	// 	'posts_per_page',
+	// 	'posts_per_archive_page',
+	// 	'offset',
+	// 	'paged',
+	// 	'page',
+	// 	'ignore_sticky_posts',
+	// 	'cat',
+	// 	'category_name',
+	// 	'category__and',
+	// 	'category__in',
+	// 	'category__not_in',
+	// 	'tag',
+	// 	'tag_id',
+	// 	'tag__and',
+	// 	'tag__in',
+	// 	'tag__not_in',
+	// 	'tag_slug__and',
+	// 	'tag_slug__in',
+	// 	'tax_query',
+	// 	'hour',
+	// 	'minute',
+	// 	'second',
+	// 	'menu_order',
+	// 	'attachment',
+	// 	'attachment_id',
+	// 	's',
+	// 	'author',
+	// 	'author_name',
+	// 	'post_type',
+	// 	'post_status',
+	// 	'orderby',
+	// 	'order',
+	// 	'meta_key',
+	// 	'meta_value',
+	// 	'meta_value_num',
+	// 	'meta_compare',
+	// 	'meta_query',
+	// 	'perm'
+	// 	'fields'
+	// 	}
+		
+	// );
+
+	return $qv;
+
+}
