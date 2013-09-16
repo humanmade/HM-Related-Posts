@@ -19,8 +19,9 @@ var HMRP = {
 
 		jQuery(document).ready( function () {
 
-			jQuery( '.hmrp-field.repeatable' ).each( function() {
+			jQuery( '.hm-rp-field.repeatable' ).each( function() {
 				_this.isMinFields( jQuery(this) );
+				_this.isMaxFields( jQuery(this) );
 			} );
 
 			jQuery( document ).on( 'click', '.hm-rp-delete-field', function(e) {
