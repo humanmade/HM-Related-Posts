@@ -40,8 +40,7 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 	if ( empty( $post_id ) )
 		return;
 
-	// Hash of args for cache id
-	$hash = hash( 'crc32', serialize( func_get_args() ) );
+	$hash = hash( 'md5', json_encode( func_get_args() ) );
 
 	if ( ! $related_posts = wp_cache_get( $post_id . $hash, 'hm_related_posts' ) ) :
 
