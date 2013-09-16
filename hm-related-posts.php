@@ -54,7 +54,8 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 			'post_status'    => 'publish',
 			'posts_per_page' => $limit,
 			'order'          => 'DESC',
-			'tax_query'      => array()
+			'tax_query'      => array(),
+			'fields'         => 'ids'
 		);
 
 		foreach ( $term_objects as $term ) {
@@ -85,18 +86,8 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 		$query_args['tax_query'] = array_values( $query_args['tax_query'] );
 		$query_args['tax_query']['relation'] = 'OR';
 			
-		$related_posts_query = new WP_QUERY( $query_args );
-		$related_posts = array();
-		
-		while ( $related_posts_query->have_posts() ) {
-			
-			$related_posts_query->the_post();
-			array_push( $related_posts, get_the_id() );	
-
-		}
-
-		wp_reset_postdata();
-		
+		$related_posts = new WP_QUERY( $query_args );
+		$related_posts = $related_posts->posts;
 		$related_posts = array_merge( $manual_related_posts, $related_posts );
 		$related_posts = array_map( 'intval', $related_posts );
 
