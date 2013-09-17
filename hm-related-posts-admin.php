@@ -55,7 +55,7 @@ function hm_rp_override_metabox( $post ) {
 					?>
 
 					<div class="hm-rp-field-item hidden" data-class="HMRP_Post_Select" style="position: relative">
-						<?php hm_rp_override_metabox_field( 'x' ); ?>
+						<?php hm_rp_override_metabox_field( 'x' ); // x used to identify hidden placeholder field. ?>
 					</div>
 
 					<button class="button hm-rp-repeat-field">Add New</button>
@@ -69,7 +69,7 @@ function hm_rp_override_metabox( $post ) {
 
 function hm_rp_override_metabox_field( $id, $value = null ) {
 
-	$ajax_args = array( 'posts_per_page' => -1 );
+	$ajax_args = array( 'posts_per_page' => 100 );
 
 	?>
 
