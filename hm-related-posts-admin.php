@@ -109,7 +109,6 @@ function hm_rp_override_metabox_script( $id, $value = false, $ajax_args = false 
 				data: function( term, page ) {
 					query.s = term;
 					query.paged = page;
-					query.wat = 'hello';
 					return {query:query};
 				},
 				results : function( data, page ) {
