@@ -34,7 +34,7 @@ function hm_rp_override_metabox( $post ) {
 	<table class="form-table hm_rp_metabox">
 		<tr>
 			<td style="width: 100%" colspan="12">
-				<div class="hm-rp-field repeatable HMRP_Post_Select" data-rep-min="2" data-rep-max="5">
+				<div class="hm-rp-field repeatable HMRP_Post_Select" data-rep-max="5">
 
 					<div class="field-title">
 						<label for="hm_rp_post-hm-rp-field-0">Manually select related post</label>
