@@ -53,7 +53,8 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 			'posts_per_page' => $limit,
 			'order'          => 'DESC',
 			'tax_query'      => array(),
-			'fields'         => 'ids'
+			'fields'         => 'ids',
+			'post__not_in'   => $manual_related_posts
 		);
 
 		foreach ( $term_objects as $term ) {
