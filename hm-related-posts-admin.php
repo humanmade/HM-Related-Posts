@@ -69,7 +69,7 @@ function hm_rp_override_metabox( $post ) {
 
 function hm_rp_override_metabox_field( $id, $value = null ) {
 
-	$ajax_args = array( 'posts_per_page' => 100, 'post__in' );
+	$ajax_args = array( 'posts_per_page' => 100 );
 
 	?>
 
@@ -236,7 +236,7 @@ function hm_rp_sanitize_query( $query ) {
 
 	$other_qvs = array(
 		'ignore_sticky_posts' => 'intval',
-		'meta_query' => 'hm_sanitize_meta_query'
+		'meta_query' => 'hm_sanitize_meta_query',
 		'tax_query' => 'hm_sanitize_tax_query'
 	);
 
