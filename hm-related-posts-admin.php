@@ -69,15 +69,13 @@ function hm_rp_override_metabox( $post ) {
 
 function hm_rp_override_metabox_field( $id, $value = null ) {
 
-	$ajax_args = array( 'posts_per_page' => 100 );
-
 	?>
 
 	<a class="hm-rp-delete-field">&times;</a>
 
 	<input id="hm_rp_post-hm-rp-field-<?php echo esc_attr( $id ); ?>" value="<?php echo esc_attr( $value ); ?>"  name="hm_rp_post[hm-rp-field-<?php echo esc_attr( $id ); ?>]"  class="hm_rp_select" data-field-id="hm_rp_post_<?php echo esc_attr( $id ); ?>" style="width: 100%" />
 
-	<?php hm_rp_override_metabox_script( $id, $value, $ajax_args ); ?>
+	<?php hm_rp_override_metabox_script( $id, $value, array() ); ?>
 
 	<?php
 }
@@ -111,10 +109,12 @@ function hm_rp_override_metabox_script( $id, $value = false, $ajax_args = false 
 				data: function( term, page ) {
 					query.s = term;
 					query.paged = page;
-					return {query:query};
+					return { query: query };
 				},
 				results : function( data, page ) {
-					return { results: data }
+					var postsPerPage = query.posts_per_page = ( 'posts_per_page' in query ) ? query.posts_per_page : ( 'showposts' in query ) ? query.showposts : 10;
+					var isMore = ( page * postsPerPage ) < data.total; 
+            		return { results: data.posts, more: isMore };
 				}
 			}
 
@@ -172,14 +172,15 @@ function hm_rp_ajax_post_select() {
 		return;
 	
 	$args = hm_rp_sanitize_query( $args );
+	
+	$args['fields'] = 'ids'; // Only need to retrieve post IDs.
+
 	$query = new WP_Query( $args );
+	
+	$json = array( 'total' => $query->found_posts, 'posts' => array() );
 
-	$posts = $query->posts;
-
-	$json = array();
-
-	foreach ( $posts as $post )
-		$json[] = array( 'id' => $post->ID, 'text' => get_the_title( $post->ID ) );
+	foreach ( $query->posts as $post_id )
+		array_push( $json['posts'], array( 'id' => $post_id, 'text' => get_the_title( $post_id ) ) );
 
 	echo json_encode( $json );
 
