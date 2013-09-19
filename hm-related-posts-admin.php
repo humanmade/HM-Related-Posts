@@ -86,9 +86,11 @@ function hm_rp_override_metabox_script( $id, $value = false, $ajax_args = false 
 
 	$query = json_encode( $ajax_args ? wp_parse_args( $ajax_args ) : (object) array() );
 
-	$url = add_query_arg( 'action', 'hm_rp_ajax_post_select', admin_url( 'admin-ajax.php' ) );
-	$url = add_query_arg( 'hm_rp_ajax_post_select_nonce', wp_create_nonce( 'hm_rp_ajax_post_select' ), $url );
-	$url = add_query_arg( 'post_id', get_the_id(), $url );
+	$url = add_query_arg( array( 
+		'action' => 'hm_rp_ajax_post_select', 
+		'hm_rp_ajax_post_select_nonce' => wp_create_nonce( 'hm_rp_ajax_post_select' ),
+		'post_id' => get_the_id()
+	), admin_url( 'admin-ajax.php' ) );
 
 	?>
 
