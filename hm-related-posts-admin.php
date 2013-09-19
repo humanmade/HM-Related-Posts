@@ -160,7 +160,6 @@ function hm_rp_save( $post_id ) {
 }
 add_action( 'save_post', 'hm_rp_save' );
 
-// TODO this should be in inside the class
 function hm_rp_ajax_post_select() {
 
 	$post_id = ! empty( $_GET['post_id'] ) ? intval( $_GET['post_id'] ) : false;
