@@ -84,6 +84,14 @@ function hm_rp_override_metabox_field( $id, $value = null ) {
 
 function hm_rp_override_metabox_script( $id, $value = false, $ajax_args = false ) {
 
+	$query = json_encode( $ajax_args ? wp_parse_args( $ajax_args ) : (object) array() );
+
+	$url = add_query_arg( array( 
+		'action' => 'hm_rp_ajax_post_select', 
+		'hm_rp_ajax_post_select_nonce' => wp_create_nonce( 'hm_rp_ajax_post_select' ),
+		'post_id' => get_the_id()
+	), admin_url( 'admin-ajax.php' ) );
+
 	?>
 
 	<script type="text/javascript">
@@ -95,15 +103,15 @@ function hm_rp_override_metabox_script( $id, $value = false, $ajax_args = false 
 				allowClear: true
 			};
 
-			var query = JSON.parse( '<?php echo json_encode( $ajax_args ? wp_parse_args( $ajax_args ) : (object) array() ); ?>' );
+			var query = JSON.parse( '<?php echo $query; ?>' );
 
 			options.ajax = {
-				url: '<?php echo add_query_arg( 'action', 'hm_rp_ajax_post_select', admin_url( 'admin-ajax.php' ) ); ?>',
+				url: '<?php echo $url; ?>',
 				dataType: 'json',
 				data: function( term, page ) {
 					query.s = term;
 					query.paged = page;
-					return query;
+					return {query:query};
 				},
 				results : function( data, page ) {
 					return { results: data }
@@ -156,7 +164,15 @@ add_action( 'save_post', 'hm_rp_save' );
 
 function hm_rp_ajax_post_select() {
 
-	$query = new WP_Query( $_GET );
+	$post_id = ! empty( $_GET['post_id'] ) ? intval( $_GET['post_id'] ) : false;
+	$nonce = ! empty( $_GET['hm_rp_ajax_post_select_nonce'] ) ? $_GET['hm_rp_ajax_post_select_nonce'] : false;
+	$args = ! empty( $_GET['query'] ) ? $_GET['query'] : array();
+
+	if ( ! $nonce || ! wp_verify_nonce( $nonce, 'hm_rp_ajax_post_select' ) || ! current_user_can( 'edit_post', $post_id ) )
+		return;
+	
+	$args = hm_rp_sanitize_query( $args );
+	$query = new WP_Query( $args );
 
 	$posts = $query->posts;
 
@@ -171,3 +187,128 @@ function hm_rp_ajax_post_select() {
 
 }
 add_action( 'wp_ajax_hm_rp_ajax_post_select', 'hm_rp_ajax_post_select' );
+
+/**
+ * Sanitize WP Query args
+ *
+ * Public QVs are allowed through...
+ * Private query vars are sanitized
+ * Other query vars are also sanitized
+ * Anything else is removed from the query
+ * 
+ * @param  array $query args
+ * @return  array $query args
+ */
+function hm_rp_sanitize_query( $query ) {
+
+	// Public Query Vars
+	// These can just be added to any url on the front end of the site so they don't need sanitizing.
+	$public_qv = array( 'm', 'p', 'posts', 'w', 'cat', 'withcomments', 'withoutcomments', 's', 'search', 'exact', 'sentence', 'calendar', 'page', 'paged', 'more', 'tb', 'pb', 'author', 'order', 'orderby', 'year', 'monthnum', 'day', 'hour', 'minute', 'second', 'name', 'category_name', 'tag', 'feed', 'author_name', 'static', 'pagename', 'page_id', 'error', 'comments_popup', 'attachment', 'attachment_id', 'subpost', 'subpost_id', 'preview', 'robots', 'taxonomy', 'term', 'cpage', 'post_type' );
+	
+	// Private Query Vars
+	// array key is the query var, array values are appropriate santization functions.
+	$private_qv = array( 
+		'offset' => 'absint',
+		'posts_per_page' => 'intval',
+		'posts_per_archive_page' => 'intval',
+		'showposts' => 'intval',
+		'nopaging' => 'intval', 
+		'post_type' => 'hm_sanitize_string_array_or_text_field',
+		'post_status' => 'hm_sanitize_string_array_or_text_field',
+		'category__in' => 'hm_sanitize_int_array',
+		'category__not_in' => 'hm_sanitize_int_array',
+		'category__and' => 'hm_sanitize_int_array',
+		'tag__in' => 'hm_sanitize_int_array',
+		'tag__not_in' => 'hm_sanitize_int_array',
+		'tag__and' => 'hm_sanitize_int_array',
+		'tag_slug__in' => 'hm_sanitize_string_array',
+		'tag_slug__and' => 'hm_sanitize_string_array',
+		'tag_id' => 'intval', 
+		'post_mime_type' => 'hm_sanitize_string_array_or_text_field',
+		'perm' => 'sanitize_text_field',
+		'comments_per_page' => 'intval',
+		'post__in' => 'hm_sanitize_int_array',
+		'post__not_in' => 'hm_sanitize_int_array',
+		'post_parent' => 'intval',
+		'post_parent__in' => 'hm_sanitize_int_array',
+		'post_parent__not_in' => 'hm_sanitize_int_array'
+	);
+
+	$other_qvs = array(
+		'ignore_sticky_posts' => 'intval',
+		'meta_query' => 'hm_sanitize_meta_query',
+		'tax_query' => 'hm_sanitize_tax_query'
+	);
+
+	foreach ( $query as $arg => &$val ) {
+			
+		if ( in_array( $arg, $public_qv ) ) {
+			
+			continue;
+		
+		} elseif ( array_key_exists( $arg, $private_qv ) ) {
+			
+			// Call the specified sanitization function for this arg.
+			$val = $private_qv[$arg]($val);
+		
+		} elseif ( array_key_exists( $arg, $other_qvs ) ) {
+			
+			// Call the specified sanitization function for this arg.
+			$val = $other_qvs[$arg]($val);
+		
+		} else {
+			
+			unset( $query[$arg] );
+			continue;
+		
+		}
+
+	}
+
+	return $query;
+
+}
+
+/**
+ * Sanitize an array of integers.
+ * 
+ * @param  array $array array of what should be integers.
+ * @return array $array array of integers
+ */
+function hm_sanitize_int_array( array $array ) {
+	return array_map( 'intval', $array );
+}
+
+/**
+ * Sanitize an array of strings.
+ * 
+ * @param  array $array array of strings.
+ * @return array $array array of sanitized strings
+ */
+function hm_sanitize_string_array( array $array ) {
+	return array_map( 'sanitize_text_field', $array );
+}
+
+/**
+ * Sanitize a string or array of strings.
+ * 
+ * @param  string/array $value
+ * @return string/array $value
+ */
+function hm_sanitize_string_array_or_text_field( $value ) {
+	if ( is_array( $value ) )
+		return hm_sanitize_string_array( $value );
+	return sanitize_text_field( $value );
+}
+
+// Sanitize meta query
+function hm_sanitize_meta_query( $q ) {
+	$meta_query = new WP_Meta_Query();
+	return $meta_query->parse_query_vars( $q );
+}
+
+// Sanitize tax query
+function hm_sanitize_tax_query( $q ) {
+	$tax_query = new WP_Query();
+	return $tax_query->parse_tax_query( $q );
+}
