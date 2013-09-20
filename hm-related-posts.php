@@ -57,7 +57,7 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 				'order'          => 'DESC',
 				'tax_query'      => array(),
 				'fields'         => 'ids',
-				'post__not_in'   => $manual_related_posts
+				'post__not_in'   => array_merge( array( $post_id ), $manual_related_posts )
 			);
 
 			foreach ( $term_objects as $term ) {
