@@ -40,10 +40,10 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 	if ( ! $related_posts = get_transient( $post_id . $hash, 'hm_related_posts' ) ) :
 
 		// Get manually specified related posts.
-		$related_posts = array_filter( get_post_meta( $post_id, 'hm_rp_post' ) );
-		$limit = $limit - count( $related_posts );
+		$manual_related_posts = array_filter( get_post_meta( $post_id, 'hm_rp_post' ) );
+		$query_limit = $limit - count( $manual_related_posts );
 						
-		if ( $limit > 0 ) {
+		if ( $query_limit > 0 ) {
 
 			if ( empty( $terms ) )
 				$term_objects = wp_get_object_terms( $post_id, $taxonomies );
@@ -53,11 +53,11 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 			$query_args = array(
 				'post_type'      => $post_types,
 				'post_status'    => 'publish',
-				'posts_per_page' => $limit,
+				'posts_per_page' => $query_limit,
 				'order'          => 'DESC',
 				'tax_query'      => array(),
 				'fields'         => 'ids',
-				'post__not_in'   => $manual_related_posts
+				'post__not_in'   => array_merge( array( $post_id ), $manual_related_posts )
 			);
 
 			foreach ( $term_objects as $term ) {
@@ -90,7 +90,7 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 			
 			$query = new WP_QUERY( $query_args );
 			
-			$related_posts = array_merge( $related_posts, $query->posts );
+			$related_posts = array_merge( $manual_related_posts, $query->posts );
 			$related_posts = array_map( 'intval', $related_posts );
 
 		}
