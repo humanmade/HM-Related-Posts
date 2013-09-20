@@ -41,9 +41,9 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 
 		// Get manually specified related posts.
 		$manual_related_posts = array_filter( get_post_meta( $post_id, 'hm_rp_post' ) );
-		$limit = $limit - count( $manual_related_posts );
+		$query_limit = $limit - count( $manual_related_posts );
 						
-		if ( $limit > 0 ) {
+		if ( $query_limit > 0 ) {
 
 			if ( empty( $terms ) )
 				$term_objects = wp_get_object_terms( $post_id, $taxonomies );
@@ -53,7 +53,7 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 			$query_args = array(
 				'post_type'      => $post_types,
 				'post_status'    => 'publish',
-				'posts_per_page' => $limit,
+				'posts_per_page' => $query_limit,
 				'order'          => 'DESC',
 				'tax_query'      => array(),
 				'fields'         => 'ids',
