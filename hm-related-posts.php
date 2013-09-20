@@ -95,6 +95,7 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 
 		}
 
+		$related_posts = array_slice( $related_posts, 0, $limit );
 
 		set_transient( $post_id . $hash, $related_posts, 'hm_related_posts', HOUR_IN_SECONDS );
 
