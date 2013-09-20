@@ -39,56 +39,62 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 
 	if ( ! $related_posts = get_transient( $post_id . $hash, 'hm_related_posts' ) ) :
 
-		$manual_related_posts = array_filter( get_post_meta( $post_id, 'hm_rp_post' ) );
-		$limit = $limit - count( $manual_related_posts );
+		// Get manually specified related posts.
+		$related_posts = array_filter( get_post_meta( $post_id, 'hm_rp_post' ) );
+		$limit = $limit - count( $related_posts );
+						
+		if ( $limit > 0 ) {
 
-		if ( empty( $terms ) )
-			$term_objects = wp_get_object_terms( $post_id, $taxonomies );
-		else
-			$term_objects = $terms;
+			if ( empty( $terms ) )
+				$term_objects = wp_get_object_terms( $post_id, $taxonomies );
+			else
+				$term_objects = $terms;
 
-		$query_args = array(
-			'post_type'      => $post_types,
-			'post_status'    => 'publish',
-			'posts_per_page' => $limit,
-			'order'          => 'DESC',
-			'tax_query'      => array(),
-			'fields'         => 'ids',
-			'post__not_in'   => $manual_related_posts
-		);
+			$query_args = array(
+				'post_type'      => $post_types,
+				'post_status'    => 'publish',
+				'posts_per_page' => $limit,
+				'order'          => 'DESC',
+				'tax_query'      => array(),
+				'fields'         => 'ids',
+				'post__not_in'   => $manual_related_posts
+			);
 
-		foreach ( $term_objects as $term ) {
+			foreach ( $term_objects as $term ) {
 
-			if ( ! isset( $query_args['tax_query'][$term->taxonomy] ) )
-				$query_args['tax_query'][$term->taxonomy] = array( 
-					'taxonomy' => $term->taxonomy, 
-					'field' => 'id', 
-					'terms' => array() 
-				);
+				if ( ! isset( $query_args['tax_query'][$term->taxonomy] ) )
+					$query_args['tax_query'][$term->taxonomy] = array( 
+						'taxonomy' => $term->taxonomy, 
+						'field' => 'id', 
+						'terms' => array() 
+					);
 
-			array_push( $query_args['tax_query'][$term->taxonomy]['terms'], $term->term_id );
+				array_push( $query_args['tax_query'][$term->taxonomy]['terms'], $term->term_id );
 
-		}
+			}
 
-		foreach ( $terms_not_in as $term ) {
+			foreach ( $terms_not_in as $term ) {
 
-			if ( ! isset( $query_args['tax_query'][$term->taxonomy] ) )
-				$query_args['tax_query']['not_' . $term->taxonomy] = array( 
-					'taxonomy' => $term->taxonomy, 
-					'field' => 'id', 
-					'terms' => array(),
-					'operator' => 'NOT IN'
-				);
+				if ( ! isset( $query_args['tax_query'][$term->taxonomy] ) )
+					$query_args['tax_query']['not_' . $term->taxonomy] = array( 
+						'taxonomy' => $term->taxonomy, 
+						'field' => 'id', 
+						'terms' => array(),
+						'operator' => 'NOT IN'
+					);
 
-		}
+			}
 
-		$query_args['tax_query'] = array_values( $query_args['tax_query'] );
-		$query_args['tax_query']['relation'] = 'OR';
+			$query_args['tax_query'] = array_values( $query_args['tax_query'] );
+			$query_args['tax_query']['relation'] = 'OR';
 			
-		$related_posts = new WP_QUERY( $query_args );
-		$related_posts = $related_posts->posts;
-		$related_posts = array_merge( $manual_related_posts, $related_posts );
-		$related_posts = array_map( 'intval', $related_posts );
+			$query = new WP_QUERY( $query_args );
+			
+			$related_posts = array_merge( $related_posts, $query->posts );
+			$related_posts = array_map( 'intval', $related_posts );
+
+		}
+
 
 		set_transient( $post_id . $hash, $related_posts, 'hm_related_posts', HOUR_IN_SECONDS );
 
