@@ -40,7 +40,7 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 	if ( ! $related_posts = get_transient( $post_id . $hash, 'hm_related_posts' ) ) :
 
 		// Get manually specified related posts.
-		$manual_related_posts = array_filter( get_post_meta( $post_id, 'hm_rp_post' ) );
+		$manual_related_posts = $related_posts = array_filter( get_post_meta( $post_id, 'hm_rp_post' ) );
 		$query_limit = $limit - count( $manual_related_posts );
 						
 		if ( $query_limit > 0 ) {
