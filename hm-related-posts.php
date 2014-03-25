@@ -6,8 +6,8 @@ Version: 0.1
 Author URI: http://www.hmn.md/
 */
 
-define( 'HMRP_PATH', str_replace( '\\', '/', dirname( __FILE__ ) ) );
-define( 'HMRP_URL', str_replace( str_replace( '\\', '/', WP_CONTENT_DIR ), str_replace( '\\', '/', WP_CONTENT_URL ), HMRP_PATH ) );
+define( 'HMRP_PATH', plugin_dir_path( __FILE__ ) );
+define( 'HMRP_URL', plugin_dir_url( __FILE__ ) );
 
 require_once( HMRP_PATH . '/hm-related-posts-admin.php' );
 
@@ -42,7 +42,7 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 		// Get manually specified related posts.
 		$manual_related_posts = $related_posts = array_filter( get_post_meta( $post_id, 'hm_rp_post' ) );
 		$query_limit = $limit - count( $manual_related_posts );
-						
+
 		if ( $query_limit > 0 ) {
 
 			if ( empty( $terms ) )
@@ -63,10 +63,10 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 			foreach ( $term_objects as $term ) {
 
 				if ( ! isset( $query_args['tax_query'][$term->taxonomy] ) )
-					$query_args['tax_query'][$term->taxonomy] = array( 
-						'taxonomy' => $term->taxonomy, 
-						'field' => 'id', 
-						'terms' => array() 
+					$query_args['tax_query'][$term->taxonomy] = array(
+						'taxonomy' => $term->taxonomy,
+						'field' => 'id',
+						'terms' => array()
 					);
 
 				array_push( $query_args['tax_query'][$term->taxonomy]['terms'], $term->term_id );
@@ -76,9 +76,9 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 			foreach ( $terms_not_in as $term ) {
 
 				if ( ! isset( $query_args['tax_query'][$term->taxonomy] ) )
-					$query_args['tax_query']['not_' . $term->taxonomy] = array( 
-						'taxonomy' => $term->taxonomy, 
-						'field' => 'id', 
+					$query_args['tax_query']['not_' . $term->taxonomy] = array(
+						'taxonomy' => $term->taxonomy,
+						'field' => 'id',
 						'terms' => array(),
 						'operator' => 'NOT IN'
 					);
@@ -87,9 +87,9 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 
 			$query_args['tax_query'] = array_values( $query_args['tax_query'] );
 			$query_args['tax_query']['relation'] = 'OR';
-			
+
 			$query = new WP_QUERY( $query_args );
-			
+
 			$related_posts = array_merge( $manual_related_posts, $query->posts );
 			$related_posts = array_map( 'intval', $related_posts );
 
