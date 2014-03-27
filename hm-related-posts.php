@@ -20,12 +20,14 @@ require_once( HMRP_PATH . '/hm-related-posts-admin.php' );
  * @param array $terms_not_in. (default: empty array) This should be an array of term objects.
  * @return array - post IDs
  */
-function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $taxonomies = array( 'post_tag', 'category' ), $terms_not_in = array(), $args = array() ) {
+function hm_rp_get_related_posts( $post_id, $args = array() ) {
 
 	$default_args = array(
-		'post_id' 	=> get_the_id(),
+		'limit'     => 10, 
+		'post_types' => array( 'post' ), 
+		'taxonomies' => array( 'post_tag', 'category' ),
 		'terms'		=> array(),
-		'related_post_taxonomies' => $taxonomies
+		'terms_not_in' => array(), 
 	);
 
 	$args = wp_parse_args( $args, $default_args );
@@ -35,9 +37,9 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 	if ( empty( $post_id ) )
 		return;
 
-	$hash = hash( 'md5', json_encode( func_get_args() ) );
+	$transient = sprintf( 'hm_rp_%s_%s', $post_id, hash( 'md5', json_encode( $args ) ) );
 
-	if ( ! $related_posts = get_transient( $post_id . $hash, 'hm_related_posts' ) ) :
+	if ( ! $related_posts = get_transient( $transient ) ) :
 
 		// Get manually specified related posts.
 		$manual_related_posts = $related_posts = array_filter( get_post_meta( $post_id, 'hm_rp_post' ) );
@@ -97,7 +99,7 @@ function hm_rp_get_related_posts( $limit = 10, $post_types = array( 'post' ), $t
 
 		$related_posts = array_slice( $related_posts, 0, $limit );
 
-		set_transient( $post_id . $hash, $related_posts, 'hm_related_posts', HOUR_IN_SECONDS );
+		set_transient( $transient, $related_posts, DAY_IN_SECONDS );
 
 	endif;
 
