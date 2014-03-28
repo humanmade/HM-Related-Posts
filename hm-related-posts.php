@@ -23,19 +23,16 @@ require_once( HMRP_PATH . '/hm-related-posts-admin.php' );
 function hm_rp_get_related_posts( $post_id, $args = array() ) {
 
 	$default_args = array(
-		'limit'     => 10, 
-		'post_types' => array( 'post' ), 
-		'taxonomies' => array( 'post_tag', 'category' ),
-		'terms'		=> array(),
-		'terms_not_in' => array(), 
+		'limit'        => 10,
+		'post_types'   => array( 'post' ),
+		'taxonomies'   => array( 'post_tag', 'category' ),
+		'terms'		   => array(),
+		'terms_not_in' => array(),
 	);
 
 	$args = wp_parse_args( $args, $default_args );
 
 	extract( $args );
-
-	if ( empty( $post_id ) )
-		return;
 
 	$transient = sprintf( 'hm_rp_%s_%s', $post_id, hash( 'md5', json_encode( $args ) ) );
 
