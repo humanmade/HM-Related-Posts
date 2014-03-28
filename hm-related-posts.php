@@ -34,7 +34,7 @@ function hm_rp_get_related_posts( $post_id, $args = array() ) {
 
 	extract( $args );
 
-	$transient = sprintf( 'hm_rp_%s_%s', $post_id, hash( 'md5', json_encode( $args ) ) );
+	$transient = sprintf( 'hmrp_%s_%s', $post_id, hash( 'md5', json_encode( $args ) ) );
 
 	if ( ! $related_posts = get_transient( $transient ) ) :
 
