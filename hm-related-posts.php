@@ -103,3 +103,17 @@ function hm_rp_get_related_posts( $post_id, $args = array() ) {
 	return $related_posts;
 
 }
+
+/**
+ * Deletes transient data from pre 1.0 versions.
+ *
+ * @return null
+ */
+function hm_rp_old_transient_cleanup() {
+
+	global $wpdb;
+
+	$query = "DELETE FROM `wp_options` WHERE `option_name` REGEXP '^\_transient\_[^_]+$'";
+	$wpdb->query( $query );
+
+}
