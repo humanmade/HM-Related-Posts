@@ -22,4 +22,22 @@ class HM_Related_Posts_CLI {
 
 	}
 
+	/**
+	 * Flush Transient Data
+	 *
+	 * Cleanup all current transient data
+	 */
+	public function flush_transient_data() {
+
+		global $wpdb;
+
+		WP_CLI::line( "Deleting all HM Related Post transients.");
+
+		$query = "DELETE FROM `wp_options` WHERE `option_name` REGEXP '^_transient_hmrp_\d+_[^_]+$'";
+		$count = $wpdb->query( $query );
+
+		WP_CLI::success( "$count HM Related Posts transients deleted.");
+
+	}
+
 }
