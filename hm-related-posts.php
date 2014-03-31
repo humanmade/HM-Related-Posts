@@ -2,7 +2,7 @@
 /*
 Plugin Name: HM Related Posts
 Author: Human Made Limited
-Version: 0.1
+Version: 1.0
 Author URI: http://www.hmn.md/
 */
 
@@ -10,6 +10,9 @@ define( 'HMRP_PATH', plugin_dir_path( __FILE__ ) );
 define( 'HMRP_URL', plugin_dir_url( __FILE__ ) );
 
 require_once( HMRP_PATH . '/hm-related-posts-admin.php' );
+
+if ( defined( 'WP_CLI' ) && WP_CLI )
+	require_once( HMRP_PATH . '/hm-related-posts-cli.php' );
 
 /**
  * Generates an array of related posts
@@ -101,19 +104,5 @@ function hm_rp_get_related_posts( $post_id, $args = array() ) {
 	endif;
 
 	return $related_posts;
-
-}
-
-/**
- * Deletes transient data from pre 1.0 versions.
- *
- * @return null
- */
-function hm_rp_old_transient_cleanup() {
-
-	global $wpdb;
-
-	$query = "DELETE FROM `wp_options` WHERE `option_name` REGEXP '^\_transient\_[^_]+$'";
-	$wpdb->query( $query );
 
 }
