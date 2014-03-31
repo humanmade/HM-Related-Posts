@@ -28,7 +28,7 @@ function hm_rp_get_related_posts( $post_id, $args = array() ) {
 	$default_args = array(
 		'limit'        => 10,
 		'post_types'   => array( 'post' ),
-		'taxonomies'   => array( 'post_tag', 'category' ),
+		'taxonomies'   => array( 'category' ),
 		'terms'		   => array(),
 		'terms_not_in' => array(),
 	);
@@ -91,9 +91,11 @@ function hm_rp_get_related_posts( $post_id, $args = array() ) {
 			$query_args['tax_query']['relation'] = 'OR';
 
 			$query = new WP_QUERY( $query_args );
+			wp_reset_postdata();
 
 			$related_posts = array_merge( $manual_related_posts, $query->posts );
 			$related_posts = array_map( 'intval', $related_posts );
+			$related_posts = array_unique( $related_posts );
 
 		}
 
