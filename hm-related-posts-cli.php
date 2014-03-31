@@ -15,7 +15,7 @@ class HM_Related_Posts_CLI {
 
 		WP_CLI::line( "Cleaning up old HM Related Post transients.");
 
-		$query = "DELETE FROM `wp_options` WHERE `option_name` REGEXP '^\_transient\_[^_]+$'";
+		$query = "DELETE FROM $wpdb->options WHERE `option_name` REGEXP '^\_transient\_[^_]+$'";
 		$count = $wpdb->query( $query );
 
 		WP_CLI::success( "$count old transients deleted.");
@@ -33,7 +33,7 @@ class HM_Related_Posts_CLI {
 
 		WP_CLI::line( "Deleting all HM Related Post transients.");
 
-		$query = "DELETE FROM `wp_options` WHERE `option_name` REGEXP '^_transient_hmrp_\d+_[^_]+$'";
+		$query = "DELETE FROM $wpdb->options WHERE `option_name` REGEXP '^_transient_hmrp_[0-9]+_[^_]+$'";
 		$count = $wpdb->query( $query );
 
 		WP_CLI::success( "$count HM Related Posts transients deleted.");
