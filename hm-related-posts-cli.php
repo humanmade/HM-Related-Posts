@@ -32,18 +32,14 @@ class HM_Related_Posts_CLI {
 		global $wpdb;
 
 		WP_CLI::line( "Deleting all HM Related Post transients.");
-
 		$query = "DELETE FROM $wpdb->options WHERE `option_name` REGEXP '^_transient_hmrp_[0-9]+_[^_]+$'";
 		$count = $wpdb->query( $query );
-
 		WP_CLI::success( "$count HM Related Posts transients deleted.");
 
-
+		WP_CLI::line( "Deleting all HM Related Post transient timeouts.");
 		$query = "DELETE FROM $wpdb->options WHERE `option_name` REGEXP '^_transient_timeout_hmrp_[0-9]+_[^_]+$'";
 		$count = $wpdb->query( $query );
-
 		WP_CLI::success( "$count HM Related Posts transient timeouts deleted.");
-
 
 	}
 

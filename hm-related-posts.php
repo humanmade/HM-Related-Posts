@@ -9,7 +9,15 @@ Author URI: http://www.hmn.md/
 define( 'HMRP_PATH', plugin_dir_path( __FILE__ ) );
 define( 'HMRP_URL', plugin_dir_url( __FILE__ ) );
 
-require_once( HMRP_PATH . '/hm-related-posts-admin.php' );
+add_action( 'plugins_loaded', function() {
+
+	if ( ! class_exists( 'CMB_Meta_Box' ) ) {
+		require_once( HMRP_PATH . '/hm-related-posts-admin.php' );
+	} else {
+		require_once( HMRP_PATH . '/hm-related-posts-cmb.php' );
+	}
+
+});
 
 if ( defined( 'WP_CLI' ) && WP_CLI )
 	require_once( HMRP_PATH . '/hm-related-posts-cli.php' );
