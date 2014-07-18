@@ -1,15 +1,8 @@
 <?php
 
-
-
 add_filter( 'cmb_meta_boxes', function( array $meta_boxes ) {
 
 	$fields = array(
-		array(
-			'id'          => 'hm_rp_show',
-			'name'        => 'Hide related posts module',
-			'type'        => 'checkbox',
-		),
 		array(
 			'id'          => 'hm_rp_post',
 			'name'        => 'Manually select related post',
@@ -20,8 +13,8 @@ add_filter( 'cmb_meta_boxes', function( array $meta_boxes ) {
 				'cat' => 8
 			),
 			'repeatable'  => true,
-			'repeatable_max'  => 5
-		)
+			'repeatable_max'  => 5,
+		),
 	);
 
 	$meta_boxes[] = array(
@@ -29,7 +22,7 @@ add_filter( 'cmb_meta_boxes', function( array $meta_boxes ) {
 		'pages'    => 'post',
 		'context'  => 'normal',
 		'priority' => 'high',
-		'fields'   => $fields
+		'fields'   => apply_filters( 'hm_rp_fields', $fields ),
 	);
 
 	return $meta_boxes;
