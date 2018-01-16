@@ -9,7 +9,7 @@ Author URI: http://www.hmn.md/
 define( 'HMRP_PATH', plugin_dir_path( __FILE__ ) );
 define( 'HMRP_URL', plugin_dir_url( __FILE__ ) );
 
-add_action( 'plugins_loaded', function() {
+add_action( 'plugins_loaded', function () {
 
 	if ( ! class_exists( 'CMB_Meta_Box' ) ) {
 		require_once( HMRP_PATH . '/hm-related-posts-admin.php' );
@@ -17,10 +17,11 @@ add_action( 'plugins_loaded', function() {
 		require_once( HMRP_PATH . '/hm-related-posts-cmb.php' );
 	}
 
-});
+} );
 
-if ( defined( 'WP_CLI' ) && WP_CLI )
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	require_once( HMRP_PATH . '/hm-related-posts-cli.php' );
+}
 
 /**
  * Generates an array of related posts
@@ -37,7 +38,7 @@ function hm_rp_get_related_posts( $post_id, $args = array() ) {
 		'limit'        => 10,
 		'post_types'   => array( 'post' ),
 		'taxonomies'   => array( 'category' ),
-		'terms'		   => array(),
+		'terms'	       => array(),
 		'terms_not_in' => array(),
 	);
 
@@ -51,14 +52,15 @@ function hm_rp_get_related_posts( $post_id, $args = array() ) {
 
 		// Get manually specified related posts.
 		$manual_related_posts = $related_posts = array_filter( get_post_meta( $post_id, 'hm_rp_post' ) );
-		$query_limit = $limit - count( $manual_related_posts );
+		$query_limit          = $limit - count( $manual_related_posts );
 
 		if ( $query_limit > 0 ) {
 
-			if ( empty( $terms ) )
+			if ( empty( $terms ) ) {
 				$term_objects = wp_get_object_terms( $post_id, $taxonomies );
-			else
+			} else {
 				$term_objects = $terms;
+			}
 
 			$query_args = array(
 				'post_type'      => $post_types,
@@ -67,38 +69,39 @@ function hm_rp_get_related_posts( $post_id, $args = array() ) {
 				'order'          => 'DESC',
 				'tax_query'      => array(),
 				'fields'         => 'ids',
-				'post__not_in'   => array_merge( array( $post_id ), $manual_related_posts )
+				'post__not_in'   => array_merge( array( $post_id ), $manual_related_posts ),
 			);
 
 			foreach ( $term_objects as $term ) {
 
-				if ( ! isset( $query_args['tax_query'][$term->taxonomy] ) )
-					$query_args['tax_query'][$term->taxonomy] = array(
+				if ( ! isset( $query_args['tax_query'][ $term->taxonomy ] ) ) {
+					$query_args['tax_query'][ $term->taxonomy ] = array(
 						'taxonomy' => $term->taxonomy,
-						'field' => 'id',
-						'terms' => array()
+						'field'    => 'id',
+						'terms'    => array(),
 					);
+				}
 
-				array_push( $query_args['tax_query'][$term->taxonomy]['terms'], $term->term_id );
+				array_push( $query_args['tax_query'][ $term->taxonomy ]['terms'], $term->term_id );
 
 			}
 
 			foreach ( $terms_not_in as $term ) {
 
-				if ( ! isset( $query_args['tax_query'][$term->taxonomy] ) )
-					$query_args['tax_query']['not_' . $term->taxonomy] = array(
+				if ( ! isset( $query_args['tax_query'][ $term->taxonomy ] ) )
+					$query_args['tax_query'][ 'not_' . $term->taxonomy ] = array(
 						'taxonomy' => $term->taxonomy,
-						'field' => 'id',
-						'terms' => array(),
-						'operator' => 'NOT IN'
+						'field'    => 'id',
+						'terms'    => array(),
+						'operator' => 'NOT IN',
 					);
 
 			}
 
-			$query_args['tax_query'] = array_values( $query_args['tax_query'] );
+			$query_args['tax_query']             = array_values( $query_args['tax_query'] );
 			$query_args['tax_query']['relation'] = 'OR';
 
-			$query = new WP_QUERY( $query_args );
+			$query = new WP_Query( $query_args );
 			wp_reset_postdata();
 
 			$related_posts = array_merge( $manual_related_posts, $query->posts );
