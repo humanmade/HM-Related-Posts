@@ -14,13 +14,12 @@ add_action( 'add_meta_boxes', 'hm_rp_add_meta_boxes' );
 
 
 function hm_rp_scripts() {
+	wp_enqueue_script( 'select2', HMRP_URL . 'js/select2/select2.js', array( 'jquery' ) );
+	wp_enqueue_script( 'hm-rp-scripts', HMRP_URL . 'js/hm-rp.js' );
+	wp_enqueue_script( 'field-select', HMRP_URL . 'js/field.select.js', array( 'jquery' ) );
 
-	wp_enqueue_script( 'select2', HMRP_URL . '/js/select2/select2.js', array( 'jquery' ) );
-	wp_enqueue_script( 'hm-rp-scripts', HMRP_URL . '/js/hm-rp.js' );
-	wp_enqueue_script( 'field-select', HMRP_URL . '/js/field.select.js', array( 'jquery' ) );
-
-	wp_enqueue_style( 'select2', HMRP_URL . '/js/select2/select2.css' );
-	wp_enqueue_style( 'hm-rp-styles', HMRP_URL . '/style.css' );
+	wp_enqueue_style( 'select2', HMRP_URL . 'js/select2/select2.css' );
+	wp_enqueue_style( 'hm-rp-styles', HMRP_URL . 'style.css' );
 
 }
 add_action( 'admin_enqueue_scripts', 'hm_rp_scripts' );
