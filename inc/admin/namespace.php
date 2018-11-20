@@ -143,7 +143,7 @@ function override_metabox_script( $id, $value = false, $ajax_args = false ) {
 			var query = JSON.parse( '<?php echo $query; ?>' );
 
 			options.ajax = {
-				url: '<?php echo esc_js( $url ); ?>',
+				url: '<?php echo esc_url_raw( $url ); ?>',
 				dataType: 'json',
 				data: function( term, page ) {
 					query.s = term;
@@ -161,7 +161,7 @@ function override_metabox_script( $id, $value = false, $ajax_args = false ) {
 
 				options.initSelection = function( element, callback ) {
 
-					var data = <?php echo sprintf( '{ id: %d, text: "%s" }', $value, get_the_title( $value ) ); ?>;
+					var data = <?php echo sprintf( '{ id: %d, text: "%s" }', $value, html_entity_decode( get_the_title( $value ) ) ); ?>;
 					callback( data );
 
 				};
@@ -236,7 +236,7 @@ function ajax_post_select() {
 	foreach ( $query->posts as $post_id ) {
 		array_push( $json['posts'], [
 			'id' => $post_id,
-			'text' => get_the_title( $post_id ),
+			'text' => html_entity_decode( get_the_title( $post_id ) ),
 		] );
 	}
 

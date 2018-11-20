@@ -11,6 +11,9 @@ define( 'HMRP_URL', plugin_dir_url( __FILE__ ) );
 
 require_once( HMRP_PATH . '/inc/namespace.php' );
 
+// Plugin bootstrap.
+HM\Related_Posts\setup();
+
 /**
  * Generates an array of related posts.
  *
