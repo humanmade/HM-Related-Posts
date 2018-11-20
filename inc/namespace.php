@@ -8,11 +8,11 @@
 namespace HM\Related_Posts;
 
 // Load admin UI.
-require_once( HMRP_PATH . '/admin/namespace.php' );
+require_once( HMRP_PATH . 'inc/admin/namespace.php' );
 
 // Load CLI commands.
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
-	require_once( HMRP_PATH . '/class-cli.php' );
+	require_once( HMRP_PATH . 'inc/class-cli.php' );
 }
 
 /**
