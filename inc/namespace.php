@@ -109,6 +109,8 @@ function get( $post_id, $args = [] ) {
 					'terms'    => [],
 					'operator' => 'NOT IN',
 				];
+
+				array_push( $query_args['tax_query'][ 'not_' . $term->taxonomy ]['terms'], $term->term_id );
 			}
 
 			$query_args['tax_query'] = array_values( $query_args['tax_query'] ); // phpcs:ignore
