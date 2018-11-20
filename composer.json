@@ -1,0 +1,16 @@
+{
+    "name": "humanmade/related-posts",
+    "description": "Extensible related posts wrapper with support for manual overrides.",
+    "type": "wordpress-plugin",
+    "require-dev": {
+        "humanmade/coding-standards": "^0.5.0"
+    },
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Matt Haines-Young",
+            "email": "matt@humanmade.com"
+        }
+    ],
+    "require": {}
+}
