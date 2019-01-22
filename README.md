@@ -31,18 +31,18 @@ The plugin exposes a single function that returns a list of post IDs.
 
 ### Custom post type support
 
-To add related posts support to your custom post simply declare the following:
+To add related posts support to your custom post type simply declare the following:
 
 `add_post_type_support( 'your-custom-post-type', 'hm-related-posts' );`
 
-In addition to fine control the post types that share the related posts support you can use `hm_rp_post_types` filter.
+In addition to fine control the post types that have related posts support you can use the `hm_rp_post_types` filter.
 
 ```php
 add_filter( 'hm_rp_post_types', function ( $post_types ) {
     // your code goes in here
 
     return $post_types;
-});
+} );
 ```
 
 ---------------------
