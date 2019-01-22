@@ -1,0 +1,19 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:9-stretch
+
+    branches:
+      only:
+        # Whitelist branches to build for.
+        - master
+    steps:
+      # Checkout repo & subs:
+      - checkout
+      - run: git submodule sync
+      - run: git submodule update --init
+
+      # Run the deploy:
+      - deploy:
+          command: .circleci/deploy.sh
