@@ -29,6 +29,22 @@ The plugin exposes a single function that returns a list of post IDs.
 - array **terms_not_in**: array of `WP_Term` objects, results will not match these terms
 - bool **ep_integrate**: if true then ElasticPress is used to get the results, Defaults to `defined( 'EP_VERSION' )`
 
+### Custom post type support
+
+To add related posts support to your custom post type simply declare the following:
+
+`add_post_type_support( 'your-custom-post-type', 'hm-related-posts' );`
+
+In addition to fine control the post types that have related posts support you can use the `hm_rp_post_types` filter.
+
+```php
+add_filter( 'hm_rp_post_types', function ( $post_types ) {
+    // your code goes in here
+
+    return $post_types;
+} );
+```
+
 ---------------------
 
 Made with ❤️ by [Human Made](https://humanmade.com)

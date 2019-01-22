@@ -17,11 +17,20 @@ use WP_Query;
  * @return void
  */
 function add_meta_boxes() {
+	$post_types = get_post_types_by_support( 'hm-related-posts' );
+
+	/**
+	 * Control the post types that should get the related posts metabox.
+	 *
+	 * @param array $post_types Affected post types.
+	 */
+	$post_types = apply_filters( 'hm_rp_post_types', $post_types );
+
 	add_meta_box(
 		'hm_rp_mb',
 		'Related Posts',
 		__NAMESPACE__ . '\\override_metabox',
-		'post'
+		$post_types
 	);
 }
 
