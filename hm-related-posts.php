@@ -2,7 +2,7 @@
 /*
 Plugin Name: HM Related Posts
 Author: Human Made Limited
-Version: 1.2.0
+Version: 1.2.2
 Author URI: https://humanmade.com
 */
 
