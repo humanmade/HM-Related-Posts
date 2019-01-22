@@ -27,8 +27,8 @@ function init() {
 	// Don't clobber the post_filter query if present.
 	remove_filter( 'ep_formatted_args', 'ep_related_posts_formatted_args', 10, 2 );
 
-	// Define related posts support
-    add_post_type_support( 'post', 'hm-related-posts' );
+	// Define related posts support.
+	add_post_type_support( 'post', 'hm-related-posts' );
 }
 
 /**
